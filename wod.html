@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운동 일정 생성기</title>
+    <style>
+        /* 기존 스타일 유지 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
+        .output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .day-input {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .strength-container,
+        .wod-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .day-inputs label{
+        }
+
+        .strength-container input[type="number"],
+        .wod-container input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            margin-left: 5px;
+            margin-right: 10px;
+        }
+        .wod-container select {
+        }
+        .floating-buttons {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: auto;
+        }
+        .floating-buttons button {
+            display: block;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .floating-buttons button:hover {
+            background-color: #555;
+        }
+        .btn-barbell {
+            background-color: #1f77b4;
+        }
+        .btn-dumbbell {
+            background-color: #9467bd;
+        }
+        .btn-wallball {
+            background-color: #8c564b;
+        }
+        .btn-box {
+            background-color: #bcbd22;
+        }
+        .autocomplete-suggestions {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: absolute;
+            z-index: 1000;
+            max-height: 150px;
+            overflow-y: auto;
+            width: calc(100% - 20px);
+            box-sizing: border-box;
+        }
+        .autocomplete-suggestions div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-suggestions div:hover {
+            background-color: #ddd;
+        }
+        textarea {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        textarea:focus {
+            border-color: #1f77b4;
+            outline: none;
+        }
+        .day-input label {
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .day-input input[type="text"] {
+            width: 45%;
+            padding: 5px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+        .add-day-button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .add-day-button:hover {
+            background-color: #218838;
+        }
+        .remove-day-button {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .remove-day-button:hover {
+            background-color: #c82333;
+        }
+        /* 스타일 추가 */
+        .btn-generate-week{
+            background-color: #FFB2D9;
+            padding: 9px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-generate-wod {
+            background-color: #D1B2FF;
+            padding: 9px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .btn-generate-week:hover{
+            background-color: #5a6268;
+        }
+        .btn-generate-wod:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-dropdown-day {
+            background-color: #CEF279;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-dropdown-day:hover {
+            background-color: #5a6268;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>운동 일정 생성기</h1>
+        <label for="start-date">시작 날짜(월요일):</label>
+        <input type="date" id="start-date">
+        <br><br>
+        <label for="day-of-week">월~금 생성 : </label>
+        <button class="btn-generate-week" onclick="generateWeek()">월~금</button>
+        <br><br>
+        <label for="day-of-week">요일별 생성 : </label>
+        <select id="day-of-week">
+            <option value="월">월</option>
+            <option value="화">화</option>
+            <option value="수">수</option>
+            <option value="목">목</option>
+            <option value="금">금</option>
+        </select>
+        <button class="btn-dropdown-day" onclick="addDay()">+</button>
+        
+        <div id="day-inputs">
+            <!-- 사용자 입력을 위한 영역 -->
+        </div>
+        
+        <button class="btn-generate-wod" onclick="generateAndCopySchedule()">와드 나와라 !</button>
+        <div class="output" id="output"></div>
+    </div>
+
+    <div class="floating-buttons">
+        <button class="btn-barbell" onclick="insertText('(225/155)-lb', '(185/135)-lb', '(155/115)-lb')">바벨 (225/155)-lb</button>
+        <button class="btn-barbell" onclick="insertText('(135/95)-lb', '(115/75)-lb', '(95/65)-lb')">바벨 (135/95)-lb</button>
+        <button class="btn-barbell" onclick="insertText('(95/65)-lb', '(75/55)-lb', '(65/45)-lb')">바벨 (95/65)-lb</button>
+
+        <button class="btn-dumbbell" onclick="insertText('(30/22.5)-kg', '(22.5/15)-kg', '(17.5/12.5)-kg')">덤벨 (30/22.5)-kg</button>
+        <button class="btn-dumbbell" onclick="insertText('(22.5/15)-kg', '(17.5/12.5)-kg', '(15/10)-kg')">덤벨 (22.5/15)-kg</button>
+
+        <button class="btn-wallball" onclick="insertText('(20/14)-lb', '(14/10)-lb', '(10/6)-lb')">월볼 (20/14)-lb</button>
+        <button class="btn-wallball" onclick="insertText('(30/20)-lb', '(20/14)-lb', '(14/10)-lb')">월볼 (30/20)-lb</button>
+
+        <button class="btn-box" onclick="insertText('(30/24)-in', '(24/20)-in', '(20/16)-in')">박스 (30/24)-in</button>
+        <button class="btn-box" onclick="insertText('(24/20)-in', '(20/16)-in', '(16/12)-in')">박스 (24/20)-in</button>
+    </div>
+
+    <script>
+        let activeTextarea = null;
+        let dayCount = 0;
+
+        // 페이지 로드 시, 시작 날짜를 다음 주 월요일로 설정합니다.
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const nextMonday = new Date(today);
+            // 0 = 일요일, 1 = 월요일, ..., 6 = 토요일
+            const daysUntilMonday = (8 - today.getDay()) % 7; // 다음 주 월요일까지의 일수
+            nextMonday.setDate(today.getDate() + daysUntilMonday);
+            const formattedDate = nextMonday.toISOString().split('T')[0];
+            document.getElementById('start-date').value = formattedDate;
+        });
+
+        function createDayInputs(day, dateString) {
+            const dayInputsContainer = document.getElementById('day-inputs');
+            const dayInput = document.createElement('div');
+            dayInput.className = 'day-input';
+            dayInput.id = `day-${dayCount}`;
+            
+            dayInput.innerHTML = `
+                <button class="remove-day-button" onclick="removeDay(${dayCount})">X</button>
+                <label for="labelStyle">${day} (${dateString})</label>
+                <br><br>
+                <div class="strength-container">
+                    <label>Strength Round: </label>
+                    <input type="number" id="strength-round-${dayCount}" min="1" value="1">
+                    <label>Time:</label>
+                    <input type="number" id="strength-time-${dayCount}" min="1">
+                </div>
+                <label>Strength Details</label>
+                <br>
+                <textarea id="strength-${dayCount}" rows="2" cols="50" oninput="showSuggestions(this, 'strength-${dayCount}')"></textarea><br>
+                <label>WOD</label>
+                <div class="wod-container">
+                    <select id="wod-type-${dayCount}">
+                        <option value="For Time">For Time</option>
+                        <option value="AMRAP">AMRAP</option>
+                        <option value="EMOM">EMOM</option>
+                    </select>
+                    <label>Round:</label>
+                    <input type="number" id="round-${dayCount}" min="1">
+                    <label>TimeCap:</label>
+                    <input type="number" id="timecap-${dayCount}" min="1">
+                    <label>Team Of 2:</label>
+                    <input type="checkbox" id="team-of-2-${dayCount}">
+                </div>
+                <label>WOD Details</label>
+                <br>
+                <textarea id="wod-${dayCount}" rows="2" cols="50" onfocus="activeTextarea = this" oninput="showSuggestions(this, 'wod-${day}')"></textarea><br>
+                <label>A:</label>
+                <input type="text" id="a-${dayCount}"><br>
+                <label>B:</label>
+                <input type="text" id="b-${dayCount}"><br>
+                <label>C:</label>
+                <input type="text" id="c-${dayCount}" value="-,-"><br>
+            `;
+            
+            dayInputsContainer.appendChild(dayInput);
+            dayCount++;
+        }
+
+        function addDay() {
+            const dayOfWeek = document.getElementById('day-of-week').value;
+            const startDateInput = document.getElementById('start-date').value;
+            if (!startDateInput) {
+                alert("시작 날짜를 입력해주세요.");
+                return;
+            }
+
+            const startDate = new Date(startDateInput);
+            const dayOffset = ["월", "화", "수", "목", "금"].indexOf(dayOfWeek);
+            const date = new Date(startDate);
+            date.setDate(startDate.getDate() + dayOffset);
+
+            const dateString = date.toISOString().split('T')[0];
+            createDayInputs(dayOfWeek, dateString);
+        }
+
+        function removeDay(dayId) {
+            const dayInput = document.getElementById(`day-${dayId}`);
+            dayInput.remove();
+        }
+
+        function generateWeek() {
+            const startDateInput = document.getElementById('start-date').value;
+            if (!startDateInput) {
+                alert("시작 날짜를 입력해주세요.");
+                return;
+            }
+
+            const startDate = new Date(startDateInput);
+            const days = ["월", "화", "수", "목", "금"];
+            
+            days.forEach((day, index) => {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + index);
+                const dateString = date.toISOString().split('T')[0];
+                createDayInputs(day, dateString);
+            });
+        }
+
+        function showSuggestions(textarea, id) {
+            const suggestionsBox = document.getElementById('suggestions-box');
+            if (suggestionsBox) suggestionsBox.remove();
+            
+            const value = textarea.value.trim();
+            if (!value) return;
+            
+            const words = value.split(' ');
+            const lastWord = words[words.length - 1];
+            
+            const suggestions = getSuggestions(lastWord);
+            if (suggestions.length === 0) return;
+
+            const rect = textarea.getBoundingClientRect();
+            const box = document.createElement('div');
+            box.className = 'autocomplete-suggestions';
+            box.id = 'suggestions-box';
+            box.style.top = `${rect.bottom + window.scrollY}px`;
+            box.style.left = `${rect.left}px`;
+
+            suggestions.forEach(suggestion => {
+                const div = document.createElement('div');
+                div.textContent = suggestion;
+                div.onclick = () => {
+                    textarea.value = textarea.value.slice(0, textarea.value.lastIndexOf(' ') + 1) + suggestion;
+                    box.remove();
+                };
+                box.appendChild(div);
+            });
+
+            document.body.appendChild(box);
+        }
+
+        function getSuggestions(lastWord) {
+            const suggestionsList = [
+            // 클린
+            'Clean',
+            'Power Clean',
+            'Squat Clean',
+            'Hang Power Clean', 
+            'Hang Squat Clean',
+            'Hang Clean and Jerk',
+            'Clean complex',
+            
+
+            //스내치
+            'Snatch',
+            'Power Snatch',
+            'Squat Snatch',
+            'Hang Power Snatch', 
+            'Hang Squat Snatch', 
+            'Snatch Balance',
+            'Snatch Pull',
+            'Muscle snatch',
+            'Snatch complex',
+            'Snatch deadlift',
+
+            // 바벨
+            'Overhead Squats',
+            'Thruster',
+            'sumo deadlift high pull',
+
+            // 스트렝스
+            'Deadlift', 
+            'Back Squat',
+            'Front Squat',
+            'Shoulder press',
+            'Push press',
+            'Jerk',
+            'Behind neck push press',
+            'Box front squat',
+
+
+
+            // 덤벨
+            'DB snatches',
+            'DB hang snatches',
+            'DB Clean and Jerk',
+            'DB hang fClean and Jerk',
+            'DB overhead squat',
+            'DB goblet squat',
+            'Devil press',
+
+
+            // 짐네
+            'Pull-up',
+            'Chest to bar',
+            'Muscle-up',
+            'Ring Muscle up',
+            'toes to bar',
+
+            // 케틀벨
+            'Russian KB swings',
+            'KB swings',
+            'KB Lunges',
+            'KB hang snatch',
+            'KB snatch',
+
+
+            // 맨몸
+            'push-up',
+            'Hand release push up',
+            'double-unders',
+            'sit-up',
+            'V-up',
+            'pistol squat',
+            'Shuttle run',
+
+            // 머신
+            'Row',
+            'Bike',
+
+            // 박스
+            'Box jump',
+            'Box jump over',
+            'DB box step-up',
+
+            //버피
+            'burpee',
+            'burpee to target',
+            'burpee over the bar',
+            'burpee over the row',
+            'burpee over the dumbbell',
+
+
+            // 벽 사용
+            'Wall Ball Shot',
+            'MB Push press',
+            'Hand Stand Push up',
+
+        ];
+
+
+            return suggestionsList.filter(suggestion =>
+                suggestion.toLowerCase().startsWith(lastWord.toLowerCase())
+            );
+        }
+
+        function insertText(wodText, aText, bText) {
+            if (!activeTextarea) {
+                alert("WOD 입력 칸을 클릭한 후 버튼을 눌러주세요.");
+                return;
+            }
+
+            const cursorPosition = activeTextarea.selectionStart;
+            const textBefore = activeTextarea.value.substring(0, cursorPosition);
+            const textAfter = activeTextarea.value.substring(cursorPosition, activeTextarea.value.length);
+
+            activeTextarea.value = `${textBefore}${wodText}${textAfter}`;
+            activeTextarea.focus();
+            activeTextarea.selectionStart = cursorPosition + wodText.length;
+            activeTextarea.selectionEnd = cursorPosition + wodText.length;
+
+            const activeDay = activeTextarea.id.split('-')[1];
+
+            const aField = document.getElementById(`a-${activeDay}`);
+            const bField = document.getElementById(`b-${activeDay}`);
+
+            aField.value = aField.value ? `${aField.value}, ${aText}` : aText;
+            bField.value = bField.value ? `${bField.value}, ${bText}` : bText;
+        }
+
+        function generateAndCopySchedule() {
+            const startDateInput = document.getElementById('start-date').value;
+            if (!startDateInput) {
+                alert("시작 날짜를 입력해주세요.");
+                return;
+            }
+            
+            const output = [];
+            
+            for (let i = 0; i < dayCount; i++) {
+                const strengthRound = document.getElementById(`strength-round-${i}`)?.value || '';
+                const strengthTime = document.getElementById(`strength-time-${i}`)?.value || '';
+                const strengthDetails = document.getElementById(`strength-${i}`)?.value || '';
+                const wodType = document.getElementById(`wod-type-${i}`)?.value || '';
+                const round = document.getElementById(`round-${i}`)?.value || '';
+                const timecap = document.getElementById(`timecap-${i}`)?.value || '';
+                const teamOf2 = document.getElementById(`team-of-2-${i}`)?.checked ? "TEAM OF 2" : "";
+                const wod = document.getElementById(`wod-${i}`)?.value || '';
+                const a = document.getElementById(`a-${i}`)?.value || '-/-';
+                const b = document.getElementById(`b-${i}`)?.value || '-/-';
+                const c = document.getElementById(`c-${i}`)?.value || '-/-';
+
+                const formattedDate = new Date(startDateInput);
+                formattedDate.setDate(formattedDate.getDate() + i);
+                const dateString = formattedDate.toISOString().split('T')[0].replace(/-/g, '');
+
+                if (document.getElementById(`day-${i}`)) {
+                    output.push(`${dateString} ${['월', '화', '수', '목', '금'][i]}`);
+                    output.push('');
+                    if (strengthRound) output.push(`Strength\n${strengthRound}R(${strengthTime}:00/set)\n${strengthDetails}`);
+                    output.push('');
+                    if (wodType) {
+                        output.push(`WOD\n${wodType}`);
+                        if (round) output.push(`Round: ${round}`);
+                        if (teamOf2) output.push(`TEAM OF 2`);
+                        output.push(`\n${wod}`);
+                    }
+                    output.push('');
+                    if (a !== '-/-') output.push(`A: ${a}`);
+                    if (b !== '-/-') output.push(`B: ${b}`);
+                    if (c !== '-/-') output.push(`C: ${c}`);
+                    output.push('');
+                    if (timecap) output.push(`TC: ${timecap}min`);
+                    output.push('');
+                    output.push('—————————');
+                }
+            }
+
+            const scheduleText = output.join('\n');
+            document.getElementById('output').textContent = scheduleText;
+
+            navigator.clipboard.writeText(scheduleText).then(() => {
+                alert("일정이 클립보드에 복사되었습니다.");
+            }).catch(err => {
+                console.error("클립보드 복사 실패:", err);
+            });
+
+        }
+
+
+    </script>
+</body>
+</html>
