@@ -70,7 +70,7 @@ function createDayInputs(day, dateString) {
     
     dayInput.innerHTML = `
         <button class="remove-day-button" onclick="removeDay(${dayCount})">X</button>
-        <label for="labelStyle">${day} (${dateString})</label>
+        <label for="labelStyle" id="dayInfo-${dayCount}">${dateString} ${day}</label>
         <br><br>
 
         <div class="strength-container">
@@ -120,23 +120,22 @@ function createDayInputs(day, dateString) {
 
 function addDay() {
     setVisibilityGenerateWod();
-    
-    const dayOfWeek = document.getElementById('day-of-week').value;
+
+    // const dayOfWeek = document.getElementById('day-of-week').value;
     const startDateInput = document.getElementById('start-date').value;
     if (!startDateInput) {
         alert("시작 날짜를 입력해주세요.");
         return;
     }
 
-    const startDate = new Date(startDateInput);
-    const dayOffset = ["월", "화", "수", "목", "금"].indexOf(dayOfWeek);
-    const date = new Date(startDate);
-    // date.setDate(startDate.getDate() + dayOffset);
-
+    const date = new Date(startDateInput);
+    const days = ["일", "월", "화", "수", "목", "금", "토"];
+    dayOfWeek = days[date.getDay()];
     const dateString = date.toISOString().split('T')[0];
     createDayInputs(dayOfWeek, dateString);
     saveData();
 }
+
 
 function removeDay(dayId) {
     const dayInput = document.getElementById(`day-${dayId}`);
@@ -180,7 +179,6 @@ function generateWeek() {
         const dateString = date.toISOString().split('T')[0];
         createDayInputs(day, dateString);
     });
-
     saveData();
 }
 
@@ -257,8 +255,6 @@ function getSuggestions(lastWord) {
         'Behind neck push press',
         'Box front squat',
 
-
-
         // 덤벨
         'DB snatches',
         'DB hang snatches',
@@ -266,6 +262,15 @@ function getSuggestions(lastWord) {
         'DB hang fClean and Jerk',
         'DB overhead squat',
         'DB goblet squat',
+        'DB lunge',
+        'Dumbell snatches',
+        'Dumbell hang snatches',
+        'Dumbell Clean and Jerk',
+        'Dumbell hang fClean and Jerk',
+        'Dumbell overhead squat',
+        'Dumbell goblet squat',
+        'Dumbell lunge',
+
         'Devil press',
 
 
@@ -357,8 +362,9 @@ function generateAndCopySchedule() {
     }
     
     const output = [];
-    
+
     for (let i = 0; i < dayCount; i++) {
+        const dayInformations = document.getElementById(`dayInfo-${i}`)?.textContent;
         const strengthRound = document.getElementById(`strength-round-${i}`)?.value || '';
         const strengthTime = document.getElementById(`strength-time-${i}`)?.value || '';
         const strengthDetails = document.getElementById(`strength-${i}`)?.value || '';
@@ -372,11 +378,10 @@ function generateAndCopySchedule() {
         const c = document.getElementById(`c-${i}`)?.value || '-/-';
 
         const formattedDate = new Date(startDateInput);
-        formattedDate.setDate(formattedDate.getDate() + i);
         const dateString = formattedDate.toISOString().split('T')[0].replace(/-/g, '');
 
         if (document.getElementById(`day-${i}`)) {
-            output.push(`${dateString} ${['월', '화', '수', '목', '금'][i]}`);
+            output.push(dayInformations);
             output.push('');
             if (strengthRound) output.push(`Strength\n${strengthRound}R(${strengthTime}:00/set)\n${strengthDetails}`);
             output.push('');

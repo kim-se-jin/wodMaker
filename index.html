@@ -8,25 +8,14 @@
 </head>
 <body onload="setDefaultStartDate()">
     <div class="container">
-        <h1>Wod Maker</h1>        
+        <h1>WOD Maker</h1>        
         <label for="start-date">날짜 입력:</label>
         <input type="date" id="start-date">
         <br><br>
-
-        <button class="btn-generate-week" onclick="generateWeek()">일주일 생성하기</button>
-        <div class="div-dropdown-day">
-            <select id="day-of-week">
-                <option value="월">월</option>
-                <option value="화">화</option>
-                <option value="수">수</option>
-                <option value="목">목</option>
-                <option value="금">금</option>
-                <option value="토">토</option>
-                <option value="일">일</option>
-            </select>
-            <button class="btn-dropdown-day" onclick="addDay()">요일별 생성하기</button>
+        <div class="div-create-days">
+            <button class="div-dropdown-day" onclick="addDay()">WOD 생성하기</button>
+            <button class="btn-generate-week" onclick="generateWeek()">월~금 생성하기</button>
         </div>
-
         <br><br>
         <div id="day-inputs">
             <!-- 사용자 입력을 위한 영역 -->
