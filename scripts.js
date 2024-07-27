@@ -72,8 +72,12 @@ function createDayInputs(day, dateString) {
         <button class="remove-day-button" onclick="removeDay(${dayCount})">X</button>
         <label for="labelStyle">${day} (${dateString})</label>
         <br><br>
+
         <div class="strength-container">
-            <label>Strength Round: </label>
+            <label for="bolderStyle">Strength</label>
+            <br><br>
+            
+            <label>Round: </label>
             <input type="number" id="strength-round-${dayCount}" min="1" value="1">
             <label>Time:</label>
             <input type="number" id="strength-time-${dayCount}" min="1">
@@ -81,8 +85,12 @@ function createDayInputs(day, dateString) {
         <label>Strength Details</label>
         <br>
         <textarea id="strength-${dayCount}" rows="2" cols="50" oninput="showSuggestions(this, 'strength-${dayCount}')"></textarea><br>
-        <label>WOD</label>
+        <br>
+
+        <label for="bolderStyle">WOD</label>
+        <br><br>
         <div class="wod-container">
+            <label>Type:</label>
             <select id="wod-type-${dayCount}">
                 <option value="For Time">For Time</option>
                 <option value="AMRAP">AMRAP</option>
@@ -121,7 +129,7 @@ function addDay() {
     const startDate = new Date(startDateInput);
     const dayOffset = ["월", "화", "수", "목", "금"].indexOf(dayOfWeek);
     const date = new Date(startDate);
-    date.setDate(startDate.getDate() + dayOffset);
+    // date.setDate(startDate.getDate() + dayOffset);
 
     const dateString = date.toISOString().split('T')[0];
     createDayInputs(dayOfWeek, dateString);
@@ -143,6 +151,13 @@ function generateWeek() {
 
     const startDate = new Date(startDateInput);
     const days = ["월", "화", "수", "목", "금"];
+
+    if (startDate.getDay() != 1 ){
+        const dayOfWeek = startDate.getDay();
+        const differenceToMonday = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+        startDate.setDate(startDate.getDate() - differenceToMonday);
+    }
+
     
     days.forEach((day, index) => {
         const date = new Date(startDate);
@@ -196,8 +211,98 @@ function getSuggestions(lastWord) {
         'Hang Power Clean', 
         'Hang Squat Clean',
         'Hang Clean and Jerk',
-        'Clean complex'
+        'Clean complex',
+        
+
+        //스내치
+        'Snatch',
+        'Power Snatch',
+        'Squat Snatch',
+        'Hang Power Snatch', 
+        'Hang Squat Snatch', 
+        'Snatch Balance',
+        'Snatch Pull',
+        'Muscle snatch',
+        'Snatch complex',
+        'Snatch deadlift',
+
+        // 바벨
+        'Overhead Squats',
+        'Thruster',
+        'sumo deadlift high pull',
+
+        // 스트렝스
+        'Deadlift', 
+        'Back Squat',
+        'Front Squat',
+        'Shoulder press',
+        'Push press',
+        'Jerk',
+        'Behind neck push press',
+        'Box front squat',
+
+
+
+        // 덤벨
+        'DB snatches',
+        'DB hang snatches',
+        'DB Clean and Jerk',
+        'DB hang fClean and Jerk',
+        'DB overhead squat',
+        'DB goblet squat',
+        'Devil press',
+
+
+        // 짐네
+        'Pull-up',
+        'Chest to bar',
+        'Muscle-up',
+        'Ring Muscle up',
+        'toes to bar',
+
+        // 케틀벨
+        'Russian KB swings',
+        'KB swings',
+        'KB Lunges',
+        'KB hang snatch',
+        'KB snatch',
+
+
+        // 맨몸
+        'push-up',
+        'Hand release push up',
+        'double-unders',
+        'sit-up',
+        'V-up',
+        'pistol squat',
+        'Shuttle run',
+
+        // 머신
+        'Row',
+        'Bike',
+
+        // 박스
+        'Box jump',
+        'Box jump over',
+        'DB box step-up',
+
+        //버피
+        'burpee',
+        'burpee to target',
+        'burpee over the bar',
+        'burpee over the row',
+        'burpee over the dumbbell',
+
+
+        // 벽 사용
+        'Wall Ball Shot',
+        'MB Push press',
+        'Hand Stand Push up',
+        'Rope climb',
+        'Wall walk'
+
     ];
+
 
     return suggestionsList.filter(suggestion =>
         suggestion.toLowerCase().startsWith(lastWord.toLowerCase())
@@ -284,4 +389,17 @@ function generateAndCopySchedule() {
     }).catch(err => {
         console.error("클립보드 복사 실패:", err);
     });
+}
+
+function toggleFloatingButtons() {
+    const floatingButtons = document.querySelector('.floating-buttons');
+    const toggleButton = document.querySelector('.toggle-floating-buttons');
+
+    if (floatingButtons.style.display === 'none') {
+        floatingButtons.style.display = 'block';
+        toggleButton.textContent = '▶';
+    } else {
+        floatingButtons.style.display = 'none';
+        toggleButton.textContent = '◀';
+    }
 }
