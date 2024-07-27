@@ -10,8 +10,7 @@ body {
     background-color: rgba(73, 101, 7, 0.2);
     justify-content: center;
     align-items: center;
-    background: linear-gradient(0deg, #e4eeee 0%, #deafd9 100%);
-
+    /* background: linear-gradient(0deg, #e4eeee 0%, #deafd9 100%); */
 }
 
 .container {
@@ -194,7 +193,7 @@ textarea:focus {
     color: #000;
     background-color: #fee500;
     display: inline;
-    width: 17%;
+    width: auto;
     padding: 8px;
     border: none;
     border-radius: 3px;
