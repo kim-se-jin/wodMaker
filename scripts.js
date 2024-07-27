@@ -119,6 +119,8 @@ function createDayInputs(day, dateString) {
 }
 
 function addDay() {
+    setVisibilityGenerateWod();
+    
     const dayOfWeek = document.getElementById('day-of-week').value;
     const startDateInput = document.getElementById('start-date').value;
     if (!startDateInput) {
@@ -380,7 +382,7 @@ function generateAndCopySchedule() {
             output.push('');
             if (wodType) {
                 output.push(`WOD\n${wodType}`);
-                if (round) output.push(`Round: ${round}`);
+                if (round) output.push(`${round} Round`);
                 if (teamOf2) output.push(`TEAM OF 2`);
                 output.push(`\n${wod}`);
             }
