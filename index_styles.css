@@ -132,6 +132,7 @@ h1 {
 }
 
 .autocomplete-suggestions {
+    text-align: left;
     border: 1px solid #ccc;
     border-radius: 5px;
     background: #fff;
@@ -140,7 +141,7 @@ h1 {
     z-index: 1000;
     max-height: 150px;
     overflow-y: auto;
-    width: calc(100% - 20px);
+    width: auto;
     box-sizing: border-box;
 }
 
