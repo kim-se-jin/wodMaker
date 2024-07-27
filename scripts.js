@@ -142,7 +142,20 @@ function removeDay(dayId) {
     saveData();
 }
 
+function setVisibilityGenerateWod(){
+    const generateWod = document.querySelector('.btn-generate-wod');
+    // 계산된 스타일을 가져오기
+    const computedStyle = getComputedStyle(generateWod);
+
+    // 현재 visibility 값 확인
+    if (computedStyle.visibility === 'hidden') {
+        generateWod.style.visibility = 'visible';
+    }
+}
+
 function generateWeek() {
+    setVisibilityGenerateWod();
+
     const startDateInput = document.getElementById('start-date').value;
     if (!startDateInput) {
         alert("시작 날짜를 입력해주세요.");
@@ -228,6 +241,7 @@ function getSuggestions(lastWord) {
 
         // 바벨
         'Overhead Squats',
+        'Cluster',
         'Thruster',
         'sumo deadlift high pull',
 

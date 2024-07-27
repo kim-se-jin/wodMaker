@@ -127,6 +127,10 @@ h1 {
     background-color: #bcbd22;
 }
 
+.btn-ironbar{
+    background-color:rgb(248, 144, 166);
+}
+
 .autocomplete-suggestions {
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -237,6 +241,7 @@ textarea:focus {
 }
 
 .btn-generate-wod {
+    visibility:hidden;
     /* background-color: #D1B2FF; */
 }
 
