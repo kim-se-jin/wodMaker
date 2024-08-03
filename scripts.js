@@ -336,6 +336,11 @@ function insertText(wodText, aText, bText) {
         return;
     }
 
+<<<<<<< HEAD
+=======
+    console.log(activeTextarea.id);
+
+>>>>>>> febb870 (,)
     const cursorPosition = activeTextarea.selectionStart;
     const textBefore = activeTextarea.value.substring(0, cursorPosition);
     const textAfter = activeTextarea.value.substring(cursorPosition, activeTextarea.value.length);
@@ -421,6 +426,12 @@ function toggleFloatingButtons() {
         toggleButton.textContent = '▶';
     } else {
         floatingButtons.style.display = 'none';
+<<<<<<< HEAD
+=======
+        toggleButton.style.position = 'fixed';
+        toggleButton.style.top = '10px';
+        toggleButton.style.right = '10px';
+>>>>>>> febb870 (,)
         toggleButton.textContent = '◀';
     }
 }
